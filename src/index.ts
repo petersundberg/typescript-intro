@@ -1,99 +1,70 @@
-// 2 - Spelartröja med Interface
-// Skriv sedan kod som skapar ett interface för en spelartröja (jersey) med egenskaperna: playerName, playerNumber, primaryColor, secondaryColor(optional), sponsorLogo(optional) och size.
-
-// Prova därefter att hårdkoda in värden för en spelartröja.
-// Hårdkoda sedan några pensionerade tröjnummer (mellan 1-99) i en array
-// (retiredNumbers)
-// Därefter skriver du en funktion som kollar om playerNumber är pensionerat (dvs återfinns i retiredNumbers och då inte kan användas till en ny tröja.)
-// Om tid finns; skapa en klass som använder interfacet och gör samma saker.
-//----------------------------------------------------------
-
-// interface Jersey {
-//     playerName: string;
-//     playerNumber: number;
-//     primaryColor: string;
-//     secondaryColor?: string;
-//     sponsorLogo?: string;
-//     size: string;
-// }
-
-// let myJersey: Jersey = {
-//     playerName: "Sundberg",
-//     playerNumber: 5,
-//     primaryColor: "green",
-//     size: "xl",
-//     sponsorLogo: "logoHere",
-// };
-
-// let retiredNumbers = [1, 5, 10, 95];
-
-// function isNumberRetired(jersey: Jersey): Boolean {
-//     return retiredNumbers.includes(jersey.playerNumber);
-// }
-// console.log(isNumberRetired(myJersey));
-
-
-//-----------------------------------------------------
-
-
-//Skapa en class som gör samma saker:
-interface Jersey {
-    playerName: string;
-    playerNumber: number;
-    primaryColor: string;
-    secondaryColor?: string;
-    sponsorLogo?: string;
-    size: Size;
+// Ett produkt-interface
+enum Color {
+    Black,
+    White,
+    Magenta,
+    Cyan,
+}
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    color?: Color;
 }
 
-interface isRetiredFunction {
-    (jersey: Jersey): boolean;
+// Ett interface för products-arrayen
+// extends Array<object> för att få tillgång till .push och
+// andra metoder
+
+interface Products extends Array<object> {
+    [index: number]: Product;
 }
 
-enum Size {
-    xa,
-    s,
-    m,
-    l,
-    xl,
-    xxl,
-}
+// Sätt både products och cart till värdet av tomma arrayer.
+let products: Products = [];
+let cart: Products = [];
 
-class PlayerJersey implements Jersey {
-    playerName: string;
-    playerNumber: number;
-    primaryColor: string;
-    secondaryColor?: string;
-    sponsorLogo?: string;
-    size: Size;
-
-    constructor(jersey: Jersey) {
-        this.playerName = jersey.playerName;
-        this.playerNumber = jersey.playerNumber;
-        this.primaryColor = jersey.primaryColor;
-        this.size = jersey.size;
-        this.secondaryColor = jersey.secondaryColor;
-        this.sponsorLogo = jersey.sponsorLogo;
-    }
-}
-
-let myJersey: Jersey = {
-    playerName: "Sundberg",
-    playerNumber: 5,
-    primaryColor: "green",
-    size: Size.xl,
-    sponsorLogo: "logoHere",
+let toyCar: Product = {
+    id: 3,
+    name: "Toycar AE-12",
+    price: 39.39,
 };
 
-let newJersey = new PlayerJersey(myJersey);
-console.log(newJersey);
+let fuzzyAnimal: Product = {
+    id: 1,
+    name: "Adorable fuzzy animal",
+    price: 120,
+    color: Color.Cyan,
+};
 
-(window as any).newJersey = newJersey;
-
-
-let retiredNumbers = [1, 5, 10, 95];
-
-function isNumberRetired(jersey: Jersey): Boolean {
-    return retiredNumbers.includes(jersey.playerNumber);
+function addProduct(product: Product): void {
+    products.push(product);
 }
-console.log(isNumberRetired(myJersey));
+
+function addToCart(product: Product): void {
+    let index = products.findIndex((p) => {
+        return p == product;
+    });
+    cart.push(products.splice(index, 1));
+}
+
+// function getTotalPrice(cart: Products): number {
+//     let total = cart.reduce((acc, product) => {
+//         return (acc += product.price);
+//     }, 0);
+//     return total;
+// }
+
+addProduct(toyCar);
+addProduct(fuzzyAnimal);
+
+console.log("P: " + products.length);
+console.log("C: " + cart.length);
+
+addToCart(toyCar);
+
+console.log("P efter trade: " + products.length);
+console.log("C efter trade: " + cart.length);
+
+(window as any).products = products;
+(window as any).addToCart = addToCart;
